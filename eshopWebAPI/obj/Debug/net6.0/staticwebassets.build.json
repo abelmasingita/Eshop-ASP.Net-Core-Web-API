@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "VbdmGeiaQgZAPWGoJ1WgqwGvpG35byiuVmAlYeO1ec4=",
+  "Source": "eshopWebAPI",
+  "BasePath": "_content/eshopWebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
