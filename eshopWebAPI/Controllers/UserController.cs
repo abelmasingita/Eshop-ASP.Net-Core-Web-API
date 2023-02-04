@@ -1,4 +1,6 @@
-﻿using eshopWebAPI.Interfaces;
+﻿using AutoMapper;
+using eshopWebAPI.Dto;
+using eshopWebAPI.Interfaces;
 using eshopWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +12,19 @@ namespace eshopWebAPI.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
         public IActionResult GetUsers()
         {
-            var users = _userRepository.GetUsers();
+            var users = _mapper.Map<List<UserDto>>( _userRepository.GetUsers());
 
             if (!ModelState.IsValid)
             {
@@ -40,7 +44,7 @@ namespace eshopWebAPI.Controllers
                 return NotFound();
             }
 
-            var user = _userRepository.GetUser(userId);
+            var user = _mapper.Map<UserDto>(_userRepository.GetUser(userId));
 
             return Ok(user);
         }

@@ -8,8 +8,8 @@ namespace eshopWebAPI.Helper
     {
         public MappingProfiles()
         {
-            CreateMap<ProductDto, Product>();
-            CreateMap<UserDto, User>();
+            CreateMap<Product, ProductDto>();
+            CreateMap<User, UserDto>();
         }
     }
 }
