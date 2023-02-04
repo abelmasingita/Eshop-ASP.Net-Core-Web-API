@@ -1,4 +1,6 @@
 using eshopWebAPI.Data;
+using eshopWebAPI.Interfaces;
+using eshopWebAPI.Repositories;
 using eshopWebAPI.Seed;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddTransient<Seeder>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
