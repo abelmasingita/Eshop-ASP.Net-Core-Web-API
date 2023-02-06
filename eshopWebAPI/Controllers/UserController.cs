@@ -24,7 +24,7 @@ namespace eshopWebAPI.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
         public IActionResult GetUsers()
         {
-            var users = _mapper.Map<List<UserDto>>( _userRepository.GetUsers());
+            var users = _mapper.Map<List<UserDto>>(_userRepository.GetUsers());
 
             if (!ModelState.IsValid)
             {
@@ -47,6 +47,31 @@ namespace eshopWebAPI.Controllers
             var user = _mapper.Map<UserDto>(_userRepository.GetUser(userId));
 
             return Ok(user);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateUser([FromBody] UserDto userCreate)
+        {
+            if (userCreate == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userMap = _mapper.Map<User>(userCreate);
+            if (!_userRepository.UserCreate(userMap))
+            {
+                ModelState.AddModelError("", "Something Went wrong while creating a user");
+                return BadRequest(ModelState);  
+            }
+
+            return Ok("Successfully Created a User");
         }
     }
 }

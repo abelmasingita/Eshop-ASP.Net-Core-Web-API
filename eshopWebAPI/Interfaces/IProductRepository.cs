@@ -8,5 +8,8 @@ namespace eshopWebAPI.Interfaces
 
         Product GetProductById(int productId);
         bool ProductExists(int productId);
+
+        bool ProductCreate(Product createProduct);
+        bool Saved();
     }
 }

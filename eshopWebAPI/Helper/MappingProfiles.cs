@@ -9,7 +9,9 @@ namespace eshopWebAPI.Helper
         public MappingProfiles()
         {
             CreateMap<Product, ProductDto>();
+            CreateMap<ProductDto, Product>();
             CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
         }
     }
 }

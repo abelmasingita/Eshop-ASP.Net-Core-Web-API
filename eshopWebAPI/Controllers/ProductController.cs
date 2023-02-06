@@ -51,5 +51,31 @@ namespace eshopWebAPI.Controllers
             }*/
             return Ok(product);
         }
+
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateProduct([FromBody] ProductDto createProduct)
+        {
+            if (createProduct == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var productMap = _mapper.Map<Product>(createProduct);
+
+            if (!_productRepository.ProductCreate(productMap))
+            {
+                ModelState.AddModelError("","Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully Created a Product");
+        }
     }
 }

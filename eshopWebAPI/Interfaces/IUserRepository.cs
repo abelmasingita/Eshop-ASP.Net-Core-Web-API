@@ -9,5 +9,8 @@ namespace eshopWebAPI.Interfaces
         User GetUser(int userId);
 
         bool UserExists(int userId);
+
+        bool UserCreate(User createUser);
+        bool Saved();
     }
 }

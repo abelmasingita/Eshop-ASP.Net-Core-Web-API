@@ -22,6 +22,19 @@ namespace eshopWebAPI.Repositories
             return _dataContext.Users.ToList();
         }
 
+        public bool Saved()
+        {
+            var saved = _dataContext.SaveChanges();
+            return saved > 0 ? true : false;
+        }
+
+        public bool UserCreate(User createUser)
+        {
+            _dataContext.Add(createUser);
+
+            return Saved();
+        }
+
         public bool UserExists(int userId)
         {
             return _dataContext.Users.Any(u => u.Id == userId);
