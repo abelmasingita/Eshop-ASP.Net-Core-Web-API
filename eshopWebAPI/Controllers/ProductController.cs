@@ -8,7 +8,7 @@ namespace eshopWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : Controller
+    public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
@@ -27,7 +27,7 @@ namespace eshopWebAPI.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             return Ok(products);
@@ -36,7 +36,8 @@ namespace eshopWebAPI.Controllers
 
         [HttpGet("productId")]
         [ProducesResponseType(200, Type = typeof(Product))]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(400, Type = typeof(Product))]
+        [ProducesResponseType(404, Type = typeof(Product))]
         public IActionResult GetProductById(int productId)
         {
             if (!_productRepository.ProductExists(productId))
@@ -45,15 +46,17 @@ namespace eshopWebAPI.Controllers
             }
 
             var product = _mapper.Map<ProductDto>(_productRepository.GetProductById(productId));
-            /*if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
-            }*/
+                return BadRequest(ModelState);
+            }
             return Ok(product);
         }
 
+
+        //Admin Create Product
         [HttpPost]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public IActionResult CreateProduct([FromBody] ProductDto createProduct)
         {
@@ -71,11 +74,77 @@ namespace eshopWebAPI.Controllers
 
             if (!_productRepository.ProductCreate(productMap))
             {
-                ModelState.AddModelError("","Something went wrong while saving");
+                ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
             }
 
             return Ok("Successfully Created a Product");
         }
+
+
+        //Admin Update Product
+        [HttpPut("productId")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateProduct( int productId, [FromBody] ProductDto updatedProduct)
+        {
+
+            if(updatedProduct == null)
+            {
+                return BadRequest(ModelState);
+            }
+           /* if(productId != updatedProduct.Id)
+            {
+                return BadRequest(ModelState);
+            }*/
+
+
+            if (!_productRepository.ProductExists(productId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var productMap = _mapper.Map<Product>(updatedProduct);
+            if (!_productRepository.ProductUpdate(productMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while Updating the Product");
+                return StatusCode(500,ModelState);
+            }
+            return NoContent();
+        }
+
+        //Admin Delete Product
+        [HttpDelete("productId")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteProduct(int productId)
+        {
+
+            if (!_productRepository.ProductExists(productId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var productDelete = _productRepository.GetProductById(productId);
+            if (!_productRepository.ProductDelete(productDelete))
+            {
+                ModelState.AddModelError("", "Something went wrong while Deleting the Product");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
+        }
+
     }
 }

@@ -9,7 +9,7 @@ namespace eshopWebAPI.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -36,7 +36,8 @@ namespace eshopWebAPI.Controllers
 
         [HttpGet("userId")]
         [ProducesResponseType(200, Type = typeof(User))]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(400, Type = typeof(User))]
+        [ProducesResponseType(404, Type = typeof(User))]
         public IActionResult GetUser(int userId)
         {
             if (!_userRepository.UserExists(userId))
@@ -50,7 +51,7 @@ namespace eshopWebAPI.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public IActionResult CreateUser([FromBody] UserDto userCreate)
         {
@@ -68,10 +69,68 @@ namespace eshopWebAPI.Controllers
             if (!_userRepository.UserCreate(userMap))
             {
                 ModelState.AddModelError("", "Something Went wrong while creating a user");
-                return BadRequest(ModelState);  
+                return BadRequest(ModelState);
             }
 
             return Ok("Successfully Created a User");
+        }
+
+        [HttpPut("userId")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateUser(int userId, [FromBody] UserDto updatedUser)
+        {
+            if (updatedUser == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_userRepository.UserExists(userId))
+            {
+                return NotFound();
+            }
+
+            var userMap = _mapper.Map<User>(updatedUser);
+            if (!_userRepository.UserUpdate(userMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while updating user");
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("userId")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteUser(int userId)
+        {
+            if (!_userRepository.UserExists(userId))
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var deletedUser = _userRepository.GetUser(userId);
+
+            if (!_userRepository.UserDelete(deletedUser))
+            {
+                ModelState.AddModelError("", "Something went wrong while deleting a user");
+                return StatusCode(500,ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

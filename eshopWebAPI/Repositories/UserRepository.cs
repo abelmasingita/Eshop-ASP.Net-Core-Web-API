@@ -35,9 +35,21 @@ namespace eshopWebAPI.Repositories
             return Saved();
         }
 
+        public bool UserDelete(User deleteUser)
+        {
+            _dataContext.Remove(deleteUser);
+            return Saved();
+        }
+
         public bool UserExists(int userId)
         {
             return _dataContext.Users.Any(u => u.Id == userId);
+        }
+
+        public bool UserUpdate(User updateUser)
+        {
+            _dataContext.Update(updateUser);
+            return Saved();
         }
     }
 }

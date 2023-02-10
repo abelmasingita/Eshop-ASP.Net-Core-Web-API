@@ -10,6 +10,9 @@ namespace eshopWebAPI.Interfaces
         bool ProductExists(int productId);
 
         bool ProductCreate(Product createProduct);
+        bool ProductUpdate(Product updateProduct);
+
+        bool ProductDelete(Product deleteProduct);
         bool Saved();
     }
 }

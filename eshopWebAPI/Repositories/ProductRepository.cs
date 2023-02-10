@@ -30,9 +30,21 @@ namespace eshopWebAPI.Repositories
             return Saved();
         }
 
+        public bool ProductDelete(Product deleteProduct)
+        {
+            _dataContext.Remove(deleteProduct);
+            return Saved();
+        }
+
         public bool ProductExists(int productId)
         {
             return _dataContext.Products.Any(p => p.Id == productId);
+        }
+
+        public bool ProductUpdate(Product updateProduct)
+        {
+            _dataContext.Update(updateProduct);
+            return Saved();
         }
 
         public bool Saved()

@@ -11,6 +11,8 @@ namespace eshopWebAPI.Interfaces
         bool UserExists(int userId);
 
         bool UserCreate(User createUser);
+        bool UserUpdate(User updateUser);
+        bool UserDelete(User deleteUser);
         bool Saved();
     }
 }
