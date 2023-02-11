@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using eshopWebAPI.Dto;
+using eshopWebAPI.Dto.Product;
 using eshopWebAPI.Interfaces;
 using eshopWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +58,7 @@ namespace eshopWebAPI.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateProduct([FromBody] ProductDto createProduct)
+        public IActionResult CreateProduct([FromBody] CreateProductDto createProduct)
         {
             if (createProduct == null)
             {
@@ -87,19 +87,14 @@ namespace eshopWebAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateProduct( int productId, [FromBody] ProductDto updatedProduct)
+        public IActionResult UpdateProduct( int productId, [FromBody] UpdateProductDto updatedProduct)
         {
 
             if(updatedProduct == null)
             {
                 return BadRequest(ModelState);
             }
-           /* if(productId != updatedProduct.Id)
-            {
-                return BadRequest(ModelState);
-            }*/
-
-
+     
             if (!_productRepository.ProductExists(productId))
             {
                 return NotFound();

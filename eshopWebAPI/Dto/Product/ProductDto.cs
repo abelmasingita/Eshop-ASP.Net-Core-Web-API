@@ -1,4 +1,4 @@
-﻿namespace eshopWebAPI.Dto
+﻿namespace eshopWebAPI.Dto.Product
 {
     public class ProductDto
     {

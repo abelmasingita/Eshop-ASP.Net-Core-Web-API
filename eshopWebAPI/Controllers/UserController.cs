@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using eshopWebAPI.Dto;
+using eshopWebAPI.Dto.User;
 using eshopWebAPI.Interfaces;
 using eshopWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +21,9 @@ namespace eshopWebAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserDto>))]
+        [ProducesResponseType(400, Type = typeof(IEnumerable<UserDto>))]
+
         public IActionResult GetUsers()
         {
             var users = _mapper.Map<List<UserDto>>(_userRepository.GetUsers());
@@ -35,9 +37,9 @@ namespace eshopWebAPI.Controllers
         }
 
         [HttpGet("userId")]
-        [ProducesResponseType(200, Type = typeof(User))]
-        [ProducesResponseType(400, Type = typeof(User))]
-        [ProducesResponseType(404, Type = typeof(User))]
+        [ProducesResponseType(200, Type = typeof(UserDto))]
+        [ProducesResponseType(400, Type = typeof(UserDto))]
+        [ProducesResponseType(404, Type = typeof(UserDto))]
         public IActionResult GetUser(int userId)
         {
             if (!_userRepository.UserExists(userId))
@@ -53,7 +55,7 @@ namespace eshopWebAPI.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult CreateUser([FromBody] UserDto userCreate)
+        public IActionResult CreateUser([FromBody] CreateUserDto userCreate)
         {
             if (userCreate == null)
             {
@@ -79,7 +81,7 @@ namespace eshopWebAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateUser(int userId, [FromBody] UserDto updatedUser)
+        public IActionResult UpdateUser(int userId, [FromBody] UpdateUserDto updatedUser)
         {
             if (updatedUser == null)
             {

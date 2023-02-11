@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using eshopWebAPI.Dto;
+using eshopWebAPI.Dto.Product;
+using eshopWebAPI.Dto.User;
 using eshopWebAPI.Models;
 
 namespace eshopWebAPI.Helper
@@ -8,10 +9,14 @@ namespace eshopWebAPI.Helper
     {
         public MappingProfiles()
         {
-            CreateMap<Product, ProductDto>();
-            CreateMap<ProductDto, Product>();
-            CreateMap<User, UserDto>();
-            CreateMap<UserDto, User>();
+            CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<Product, CreateProductDto>().ReverseMap();
+            CreateMap<Product, UpdateProductDto>().ReverseMap();
+           
+            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, CreateUserDto>().ReverseMap();
+            CreateMap<User, UpdateUserDto>().ReverseMap();
+
         }
     }
 }
