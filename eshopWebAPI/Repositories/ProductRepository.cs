@@ -5,53 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eshopWebAPI.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
-        private readonly DataContext _dataContext;
+        private readonly DataContext _context;
 
-        public ProductRepository(DataContext dataContext)
+        public ProductRepository(DataContext context) : base(context)
         {
-            _dataContext = dataContext;
-        }
-
-        public Product GetProductById(int productId)
-        {
-            return _dataContext.Products.Where(p => p.Id == productId).FirstOrDefault();
-        }
-
-        public ICollection<Product> GetProducts()
-        {
-            return _dataContext.Products.ToList();
-        }
-
-        public bool ProductCreate( Product createProduct)
-        {
-            _dataContext.Add(createProduct);
-            return Saved();
-        }
-
-        public bool ProductDelete(Product deleteProduct)
-        {
-            _dataContext.Remove(deleteProduct);
-            return Saved();
-        }
-
-        public bool ProductExists(int productId)
-        {
-            return _dataContext.Products.Any(p => p.Id == productId);
-        }
-
-        public bool ProductUpdate(Product updateProduct)
-        {
-            _dataContext.Update(updateProduct);
-            return Saved();
-        }
-
-        public bool Saved()
-        {
-            var saved = _dataContext.SaveChanges();
-
-            return saved > 0 ? true : false;    
+            _context = context;
         }
     }
 }

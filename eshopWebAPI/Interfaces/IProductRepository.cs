@@ -2,17 +2,8 @@
 
 namespace eshopWebAPI.Interfaces
 {
-    public interface IProductRepository
+    public interface IProductRepository : IGenericRepository<Product>
     {
-        ICollection<Product> GetProducts();
 
-        Product GetProductById(int productId);
-        bool ProductExists(int productId);
-
-        bool ProductCreate(Product createProduct);
-        bool ProductUpdate(Product updateProduct);
-
-        bool ProductDelete(Product deleteProduct);
-        bool Saved();
     }
 }

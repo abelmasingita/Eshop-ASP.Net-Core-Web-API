@@ -2,6 +2,7 @@
 using eshopWebAPI.Dto.Product;
 using eshopWebAPI.Interfaces;
 using eshopWebAPI.Models;
+using eshopWebAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eshopWebAPI.Controllers
@@ -20,10 +21,10 @@ namespace eshopWebAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Product>))]
-        public IActionResult GetProducts()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ProductDto>))]
+        public async Task<IActionResult> GetProducts()
         {
-            var products = _mapper.Map<List<ProductDto>>(_productRepository.GetProducts());
+            var products = _mapper.Map<List<ProductDto>>(await _productRepository.GetAllAsync());
 
             if (!ModelState.IsValid)
             {
@@ -35,17 +36,16 @@ namespace eshopWebAPI.Controllers
 
 
         [HttpGet("productId")]
-        [ProducesResponseType(200, Type = typeof(Product))]
-        [ProducesResponseType(400, Type = typeof(Product))]
-        [ProducesResponseType(404, Type = typeof(Product))]
-        public IActionResult GetProductById(int productId)
+        [ProducesResponseType(200, Type = typeof(ProductDto))]
+        [ProducesResponseType(400, Type = typeof(ProductDto))]
+        [ProducesResponseType(404, Type = typeof(ProductDto))]
+        public async Task<IActionResult> GetProductById(int productId)
         {
-            if (!_productRepository.ProductExists(productId))
+            if (!await _productRepository.Exists(productId))
             {
                 return NotFound();
             }
-
-            var product = _mapper.Map<ProductDto>(_productRepository.GetProductById(productId));
+            var product = _mapper.Map<ProductDto>(await _productRepository.GetAsync(productId));
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -56,9 +56,9 @@ namespace eshopWebAPI.Controllers
 
         //Admin Create Product
         [HttpPost]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public IActionResult CreateProduct([FromBody] CreateProductDto createProduct)
+        [ProducesResponseType(200, Type = typeof(CreateProductDto))]
+        [ProducesResponseType(400, Type = typeof(CreateProductDto))]
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto createProduct)
         {
             if (createProduct == null)
             {
@@ -69,35 +69,26 @@ namespace eshopWebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             var productMap = _mapper.Map<Product>(createProduct);
-
-            if (!_productRepository.ProductCreate(productMap))
-            {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
-            }
-
-            return Ok("Successfully Created a Product");
+            var product = await _productRepository.AddAsync(productMap);
+        
+            return Ok(product);
         }
-
-
         //Admin Update Product
         [HttpPut("productId")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateProduct( int productId, [FromBody] UpdateProductDto updatedProduct)
+        public async Task<IActionResult> UpdateProduct( int productId, [FromBody] UpdateProductDto updatedProduct)
         {
-
-            if(updatedProduct == null)
+            if (updatedProduct == null)
             {
                 return BadRequest(ModelState);
             }
-     
-            if (!_productRepository.ProductExists(productId))
+
+            if (productId != updatedProduct.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (!ModelState.IsValid)
@@ -105,12 +96,18 @@ namespace eshopWebAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var productMap = _mapper.Map<Product>(updatedProduct);
-            if (!_productRepository.ProductUpdate(productMap))
+            if (!await _productRepository.Exists(productId))
             {
-                ModelState.AddModelError("", "Something went wrong while Updating the Product");
-                return StatusCode(500,ModelState);
+                return NotFound();
             }
+            var user = await _productRepository.GetAsync(productId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(updatedProduct, user);
+            await _productRepository.UpdateAsync(user);
+
             return NoContent();
         }
 
@@ -119,25 +116,17 @@ namespace eshopWebAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteProduct(int productId)
+        public async Task<IActionResult> DeleteProduct(int productId)
         {
-
-            if (!_productRepository.ProductExists(productId))
+            if (!await _productRepository.Exists(productId))
             {
                 return NotFound();
             }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            var productDelete = _productRepository.GetProductById(productId);
-            if (!_productRepository.ProductDelete(productDelete))
-            {
-                ModelState.AddModelError("", "Something went wrong while Deleting the Product");
-                return StatusCode(500, ModelState);
-            }
+            await _productRepository.DeleteAsync(productId);
             return NoContent();
         }
 
