@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eshopWebAPI.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T>  where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly DataContext _context;
 
@@ -12,46 +12,49 @@ namespace eshopWebAPI.Repositories
         {
             _context = context;
         }
-
         public async Task<T> AddAsync(T entity)
         {
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
 
-            return entity;  
+            return entity;
         }
 
-        public async Task DeleteAsync(int? id)
+        public async Task DeleteAsync(string? Id)
         {
-            var entity = await GetAsync(id);
-            _context.Set<T>().Remove(entity);
+            var entity = await GetAsync(Id);
+            _context.Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> Exists(int id)
+        public async Task<bool> Exists(string? Id)
         {
-            var entity = await GetAsync(id);
+            var entity = await GetAsync(Id);
             return entity != null;
         }
 
-        public async Task<List<T>> GetAllAsync()
+        public Task<List<T>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();   
+            return _context.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetAsync(int? id)
+        public async Task<T> GetAsync(string? Id)
         {
-             if(id is null)
+            if (Id is null)
             {
                 return null;
             }
-            return await _context.Set<T>().FindAsync(id);
+            var entity = await _context.Set<T>().FindAsync(Id);
+            return entity;
         }
 
-        public  async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             _context.Update(entity);
-            await _context.SaveChangesAsync();    
+
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

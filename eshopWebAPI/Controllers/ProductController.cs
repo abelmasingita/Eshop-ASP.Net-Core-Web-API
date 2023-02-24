@@ -39,7 +39,7 @@ namespace eshopWebAPI.Controllers
         [ProducesResponseType(200, Type = typeof(ProductDto))]
         [ProducesResponseType(400, Type = typeof(ProductDto))]
         [ProducesResponseType(404, Type = typeof(ProductDto))]
-        public async Task<IActionResult> GetProductById(int productId)
+        public async Task<IActionResult> GetProductById(string productId)
         {
             if (!await _productRepository.Exists(productId))
             {
@@ -70,16 +70,16 @@ namespace eshopWebAPI.Controllers
                 return BadRequest(ModelState);
             }
             var productMap = _mapper.Map<Product>(createProduct);
-            var product = await _productRepository.AddAsync(productMap);
-        
-            return Ok(product);
+            await _productRepository.AddAsync(productMap);
+
+            return NoContent();
         }
         //Admin Update Product
         [HttpPut("productId")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateProduct( int productId, [FromBody] UpdateProductDto updatedProduct)
+        public async Task<IActionResult> UpdateProduct( string productId, [FromBody] UpdateProductDto updatedProduct)
         {
             if (updatedProduct == null)
             {
@@ -116,7 +116,7 @@ namespace eshopWebAPI.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteProduct(int productId)
+        public async Task<IActionResult> DeleteProduct(string productId)
         {
             if (!await _productRepository.Exists(productId))
             {
