@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace eshopWebAPI.Models
 {
-    public class User
+    public class AppUser : IdentityUser
     {
-        [Key]
-        public string? Id { get; set; }
-
         public string FirstName { get; set; }
         public string LastName { get; set; }
 

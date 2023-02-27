@@ -1,13 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
-namespace eshopWebAPI.Models
+namespace eshopWebAPI.Data.Dto.Order
 {
-    public class Order
+    public class OrderBaseDto
     {
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string Id { get; set; }
 
         public string paymentMethod { get; set; }
         public string paymentResult { get; set; }
@@ -22,11 +18,6 @@ namespace eshopWebAPI.Models
         public DateTime paidAt { get; set; }
         public DateTime deliveredAt { get; set; }
 
-        [ForeignKey(nameof(UserId))]
-        public string? UserId { get; set; }
-        public AppUser? User { get; set; }
-
-        // public List<> orderItems {get;set;}
-
+     
     }
 }

@@ -16,7 +16,7 @@ namespace eshopWebAPI.Models
         //public ICollection Reviews { get; set; }
         [ForeignKey(nameof(UserId))]
         public string? UserId { get; set; }
-        public User? User { get; set; }
+        public AppUser? User { get; set; }
         public int NumReviews { get; set; }
         public int CountInStock { get; set; }
         public string Brand { get; set; }

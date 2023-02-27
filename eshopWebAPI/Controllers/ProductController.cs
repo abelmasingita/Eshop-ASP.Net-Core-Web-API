@@ -100,13 +100,13 @@ namespace eshopWebAPI.Controllers
             {
                 return NotFound();
             }
-            var user = await _productRepository.GetAsync(productId);
-            if (user == null)
+            var product = await _productRepository.GetAsync(productId);
+            if (product == null)
             {
                 return NotFound();
             }
-            _mapper.Map(updatedProduct, user);
-            await _productRepository.UpdateAsync(user);
+            _mapper.Map(updatedProduct, product);
+            await _productRepository.UpdateAsync(product);
 
             return NoContent();
         }
